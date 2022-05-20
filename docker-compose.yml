@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+  test:
+    image: chillfish8/rewrk
+    command: ["--help"]
+
+  dev:
+    image: python-pgbouncer-benchmark_app
+    build: .
+    volumes:
+      - ./:/opt/app
+
+  app:
+    extends:
+      service: dev
+    environment:
+      DATABASE_URL: pguser:pguser@pgbouncer:6432/postgres
+    depends_on:
+      - pgbouncer
+
+  fastapi-1w-1t:
+    extends:
+      service: app
+    command: gunicorn app.fastapi:app --workers 1 --threads 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
+
+  fastapi-2w-1t:
+    extends:
+      service: app
+    command: gunicorn app.fastapi:app --workers 2 --threads 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
+
+  flask-1w-1t:
+    extends:
+      service: app
+    command: gunicorn app.flask:app --workers 1 --threads 1 --bind 0.0.0.0:80
+
+  flask-2w-40t:
+    extends:
+      service: app
+    command: gunicorn app.flask:app --workers 2 --threads 40 --bind 0.0.0.0:80
+
+  postgres:
+    image: postgres:latest
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pguser
+      POSTGRES_DB: pgdb
+
+  pgbouncer:
+    image: bitnami/pgbouncer
+    environment:
+       - POSTGRESQL_USERNAME=pguser
+       - POSTGRESQL_PASSWORD=pguser
+       - POSTGRESQL_HOST=postgres
+       - POSTGRESQL_DATABASE=pgdb
+       - PGBOUNCER_POOL_MODE=session
+       - PGBOUNCER_MAX_CLIENT_CONN=1000
+       - PGBOUNCER_DEFAULT_POOL_SIZE=80
+       - PGBOUNCER_MAX_DB_CONNECTIONS=80
+    depends_on:
+      - postgres
+
+volumes:
+  psql_data:
