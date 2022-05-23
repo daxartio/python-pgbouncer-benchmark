@@ -29,6 +29,16 @@ services:
       service: app
     command: gunicorn app.fastapi:app --workers 2 --threads 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
 
+  fastapi-async-1w-1t:
+    extends:
+      service: app
+    command: gunicorn app.fastapi:app --workers 1 --threads 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
+
+  fastapi-async-2w-1t:
+    extends:
+      service: app
+    command: gunicorn app.fastapi:app --workers 2 --threads 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
+
   flask-1w-1t:
     extends:
       service: app

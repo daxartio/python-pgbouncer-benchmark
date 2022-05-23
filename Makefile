@@ -23,10 +23,10 @@ down:
 test:
 	docker-compose run --rm test -h http://flask-1w-1t:80/test -t 12 -c 60 -d 5s --pct
 	docker-compose run --rm test -h http://fastapi-1w-1t:80/test-sync -t 12 -c 60 -d 5s --pct
-	docker-compose run --rm test -h http://fastapi-1w-1t:80/test-async -t 12 -c 60 -d 5s --pct
+	docker-compose run --rm test -h http://fastapi-async-1w-1t:80/test-async -t 12 -c 60 -d 5s --pct
 	docker-compose run --rm test -h http://flask-2w-40t:80/test -t 12 -c 60 -d 5s --pct
 	docker-compose run --rm test -h http://fastapi-2w-1t:80/test-sync -t 12 -c 60 -d 5s --pct
-	docker-compose run --rm test -h http://fastapi-2w-1t:80/test-async -t 12 -c 60 -d 5s --pct
+	docker-compose run --rm test -h http://fastapi-async-2w-1t:80/test-async -t 12 -c 60 -d 5s --pct
 
 .PHONY: stats
 stats:
